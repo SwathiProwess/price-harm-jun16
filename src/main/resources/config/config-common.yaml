@@ -1,0 +1,12 @@
+# Common File to be use in All env
+application:
+  name: "iewc-priceharm-eapi"
+  
+milestone:
+  category: "LOG"
+  
+#logging
+source: "iewc-user"
+target: "priceharm-papi"
+requestMessage: "Received priceharm request from iewc user"
+responseMessage: "Response sent back to iewc user"

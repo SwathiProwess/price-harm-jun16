@@ -1,0 +1,10 @@
+{
+  "kunnr": {
+    "customerNumber": "string"
+  },
+  "searchparams": [
+    {
+      "material": "string"
+    }
+  ]
+}

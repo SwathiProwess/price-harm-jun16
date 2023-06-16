@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "iewC_MATERIAL": "string",
+      "peR_AMT": 0,
+      "peR_UOM": "FT",
+      "orderCurrency": "USD",
+      "taR_QTY_START": 0,
+      "taR_QTY_END": 0,
+      "taR_AMT": 0
+    }
+  ],
+  "messages": [
+    {
+      "type": "default",
+      "message": "string"
+    }
+  ],
+  "success": true
+}

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="iewc-priceharm-eapi-test-suite.xml" />
+	<munit:test name="iewc-priceharm-eapi-mainTest" doc:id="90de14b7-0390-4a83-ac36-53b7169dbdd9" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="37e130cd-0c2d-42fc-8cfa-92e7944bfccb" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="85f30b70-2e13-445d-b778-fde677062b92" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="b4787e87-f32d-4f71-89eb-7f76fca25280" name="iewc-priceharm-eapi-main"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="iewc-priceharm-eapi-consoleTest" doc:id="7c4806bd-ac06-4bf5-b214-9e269c03becc" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitConsole" doc:id="cc479f7f-8b15-4983-87a6-10aab816adcd" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-console" doc:id="84449087-0b14-4359-a469-87c29f03c562" name="iewc-priceharm-eapi-console"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="iewc-priceharm-eapi-test-suite-post:\price_harm:application\json:iewc-priceharm-eapi-configTest" doc:id="edb2e7c0-88c2-45d8-9a5b-43a2bd8e9540" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="httpRequest" doc:id="13f692ed-215e-4e9a-8e45-edb4ea735182" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="60ce0fac-84a2-426c-80e3-6987e87b99a7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://MunitFiles/response.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="853350c6-6dcb-4608-b630-aca6159677af">
+				<munit:payload value="#[output application/json  --- readUrl('classpath://MunitFiles/request.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\price_harm:application\json:iewc-priceharm-eapi-config" doc:id="a911f3ed-147b-4534-95a2-3a9638460cd4" name="post:\price_harm:application\json:iewc-priceharm-eapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="734678ed-1f9b-4a81-929b-cbba70db9662" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/response.dwl'))]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:METHOD_NOT_ALLOWED" doc:id="fa0448f8-409b-47a8-9857-84a6b7970e57" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="0b153edd-0c97-4020-8b19-2f1c5a2b3544" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="c114ae22-cc69-4bcd-bc38-cc2974bf728e" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="fecbe32f-57f9-443d-9bc8-6a9032ce3915" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6ba8f251-6152-4cf8-a813-0aa58e5bdfa4" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/methodnotallowed.dwl'))]" expression="payload"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_IMPLEMENTED" doc:id="99adfa98-6bad-45de-b8c5-4079ff4b4576" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="b8cc5716-d00e-486d-93d7-2f2ff03bf5cc" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="23b0ba0d-a750-4283-9556-e07625b5aaf8" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="93fee3cf-a1b5-48bb-903c-55b13fa96a17" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8f27af12-b5d0-4c1d-bc5b-8befd9be5f9c" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/notImplemented.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="3627e511-36ae-4872-be18-476c584e76de" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="6bec28cd-e273-4cfc-936c-5b3b7ef4d155" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b86c580c-9d29-43a0-b939-4aa4a5250aaf" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="31a9e55b-43d3-4eef-a813-4e17cfca24dc" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d80cf2ff-eb94-40da-88a7-17793c90ee04" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/unsupportedMediaType.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_ACCEPTABLE" doc:id="beaa246f-38a5-4275-bd78-cfe27addb48e" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="61b3e3bb-d111-4dec-901b-f556d255d9a7" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="dfa9cb89-ca98-42ee-8e8b-8aba3be0a712" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="4d29fe45-603d-4f17-a27c-a514f5d9b39a" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8ee6bfd6-5981-49b5-8270-42c615828333" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/notAcceptable.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:BAD_REQUEST" doc:id="b7f572e9-5870-4226-a578-4ea222de3d77" description="Test" expectedErrorType="APIKIT:BAD_REQUEST" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="16a88f91-a962-465d-8805-6c64092b0289" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="c4f5bfa5-f4ad-498d-949c-119e9fc8d4da" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="4c61937d-c281-4599-ad94-114ace17cab2" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="878df27f-a115-4376-b37a-5a7682dda936" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/badRequest.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_FOUND" doc:id="6bf8d5ad-e592-4694-a17d-9a020d23fa2e" description="Test" expectedErrorType="APIKIT:NOT_FOUND" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="ad17656f-b9f3-4178-9267-e076c9882b17" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="79e70283-d683-49e1-b7de-7410da614e9b" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="239e8003-60c9-47e9-93d7-22cb647e059b" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="7a316e74-954c-4cf8-86d0-6f2ffe99fe6e" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/badRequest.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="SAP:CONNECTIVITY" doc:id="fa21ef10-b1ae-425a-bff0-970e66626d90" description="Test" expectedErrorType="SAP:CONNECTIVITY" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="19d13e95-3a3d-4ba7-a0b1-facf242e8a82" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SAP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="980414f6-12f4-4274-9331-6d6c56c7eb9f" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="e7862dda-2ff9-40d8-867e-926c9e9a3ebb" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4f14f064-a26b-4f42-b2bd-91d41c3557fd" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/sapConnectivity.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="SAP:INVALID_INPUT" doc:id="2693e490-cc73-4f21-85f4-1aa37d6d090f" description="Test" expectedErrorType="SAP:INVALID_INPUT" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="f64b4364-bb27-4456-a54f-33fc18c04d06" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SAP:INVALID_INPUT" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="517102ae-ab8e-4eed-83c2-9ed705ac90f4" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="02eaa04c-691b-4482-a9be-6eb165005cfe" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f89c87f1-8277-4525-a9e4-b49fbb5ca22d" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/sapInvalidInput.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="HTTP:CONNECTIVITY" doc:id="234d290b-4782-466d-ae58-1e6ae04a84c8" description="Test" expectedErrorType="HTTP:CONNECTIVITY" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="33a239dd-e7b5-407b-9a43-a3a938d38d3d" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="c6f24874-72a1-4292-9b4e-4f256b5c06c7" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="0e2fe89d-3c00-45ff-bb8e-b6fbdabb5dbc" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="3e29de88-0359-4e17-af1b-92576cd0f6b6" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/httpConnectivity.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="SAP:INVALID_CACHE" doc:id="2cca1358-0276-4300-90a1-d4f961fc324c" description="Test" expectedErrorType="SAP:INVALID_CACHE" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apiKitRouter" doc:id="418a4613-c008-43f6-af82-4b0947f6f9f6" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="iewc-priceharm-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SAP:INVALID_CACHE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="19565dce-1a18-4ca4-bd85-fb4a49cf3560" >
+				<munit:variables >
+					<munit:variable key="httpMethod" value='"POST"' />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to iewc-priceharm-eapi-main" doc:id="77c52d59-e6f7-4819-bb52-976c1cbe88d3" name="iewc-priceharm-eapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="645426d9-a4b5-4766-a985-15cefb894a20" expression="payload" is="#[MunitTools::equalTo(readUrl('classpath://MunitFiles/sapInvalidCache.dwl'))]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
